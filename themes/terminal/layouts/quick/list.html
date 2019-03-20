@@ -1,0 +1,49 @@
+{{ define "main" }}
+  <div class="posts">
+    {{ $paginator := .Paginate (where .Data.Pages "Type" "quick") }}
+
+    {{ range $paginator.Pages }}
+    <div class="post on-list">
+      <h1 class="post-title"><a href="{{ .Params.link }}">{{ .Title | markdownify }}</a></h1>
+      <div class="post-meta">
+        <span class="post-date">
+          {{ .Date.Format "2006-01-02" }}
+        </span>
+      {{ if ne .Params.Github "" }}
+        <span class="post-date">
+          <a href='{{ .Params.Github }}'>{{ .Params.Github }}</a>
+        </span>
+      {{ end }}
+        {{ with .Params.Author }}<span class="post-author">:: {{ . }}</span>{{ end }}
+      </div>
+
+      {{ if .Params.tags }}
+        <span class="post-tags">
+          {{ range .Params.tags }}
+            #<a href="{{ (urlize (printf "tags/%s/" . )) | absURL }}">{{ . }}</a>&nbsp;
+          {{ end }}
+        </span>
+      {{ end }}
+
+      {{ with .Params.Cover }}
+        <img src="{{ . | absURL }}" class="post-cover" />
+      {{ end }}
+
+      <div class="post-content">
+        {{ with .Description }}
+          <h2>{{ . | markdownify }}</h2>
+        {{ else }}
+          {{ if .Truncated }}
+          <h2>{{ .Summary | markdownify }}</h2>
+          {{ end }}
+        {{ end }}
+      </div>
+    <div class="post-content">
+      {{ .Content }}
+    </div>
+      <div><a class="read-more button" href="{{.Params.link}}">Go To {{ .Params.Link }} →</a></div>
+    </div>
+    {{ end }}
+    {{ partial "pagination.html" . }}
+  </div>
+{{ end }}

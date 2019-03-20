@@ -1,0 +1,39 @@
+{{ define "main" }}
+  <div class="posts">
+    {{ $paginator := .Paginate (where .Data.Pages "Type" "resources") }}
+
+    {{ range $paginator.Pages }}
+    <div class="post on-list">
+      <h1 class="post-title"><a href="{{ .Permalink }}">{{ .Title | markdownify }}</a></h1>
+      <div class="post-meta">
+      {{ if ne .Params.Link "" }}
+        <span class="post-date">
+          <a href='{{ .Params.Link }}'>{{ .Params.Link }}</a>
+        </span>
+      {{ end }}
+      </div>
+
+      {{ if .Params.tags }}
+        <span class="post-tags">
+          {{ range .Params.tags }}
+            #<a href="{{ (urlize (printf "tags/%s/" . )) | absURL }}">{{ . }}</a>&nbsp;
+          {{ end }}
+        </span>
+      {{ end }}
+
+
+      <div class="post-content">
+        {{ with .Description }}
+          {{ . | markdownify }}
+        {{ else }}
+          {{ if .Truncated }}
+            {{ .Summary | markdownify }}
+          {{ end }}
+        {{ end }}
+      </div>
+      <div><a class="read-more button" href="{{.Params.link}}">Go To {{ .Params.Link }} →</a></div>
+    </div>
+    {{ end }}
+    {{ partial "pagination.html" . }}
+  </div>
+{{ end }}

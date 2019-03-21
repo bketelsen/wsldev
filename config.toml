@@ -5,7 +5,7 @@ paginate = 5
 canonifyurls = false
 buildFuture = true
 theme = "terminal"
-googleAnalytics = "UA-19934571-2"
+googleAnalytics = "UA-136687283-1"
 copyright = "wsl.dev Authors"
 
 [params]

@@ -5,8 +5,8 @@ paginate = 5
 canonifyurls = false
 buildFuture = true
 theme = "terminal"
-googleAnalytics = "UA-46945124-1"
-copyright = "Brian Ketelsen"
+googleAnalytics = "UA-19934571-2"
+copyright = "wsl.dev Authors"
 
 [params]
   # dir name of your blog content (default is `content/posts`)
@@ -15,8 +15,8 @@ copyright = "Brian Ketelsen"
   themeColor = "orange"
   # if you set this to 0, only submenu trigger will be visible
   showMenuItems = 5
-  author = "Brian Ketelsen"
-  twitter = "bketelsen"
+  author = "wsl.dev staff"
+  twitter = "wsldev"
   # set theme to full screen width
   fullWidthTheme = true
   # center theme with default width

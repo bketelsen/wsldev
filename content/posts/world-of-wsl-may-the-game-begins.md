@@ -1,5 +1,5 @@
 ---
-title: 'World of WSL: may the game begin'
+title: 'World of WSL: let the games begin'
 author: Nunix
 date: 2019-03-25T21:25:30.119Z
 description: Crazy WSL ideas have now a new home.

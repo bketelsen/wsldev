@@ -88,13 +88,13 @@ First we will need to install OpenSSH server on the VM:
 
 ```bash
 ### Update the system first
-$ sudo apt update && sudo apt upgrade
+sudo apt update && sudo apt upgrade
 
 ### Install OpenSSH server
-$ sudo apt install openssh-server
+sudo apt install openssh-server
 
 ### Test the connection
-$ ssh localhost
+ssh localhost
 ```
 
 Now back to WSL, we will need to find a way to connect to the VM despite the fact of having a dynamic IP.
@@ -115,7 +115,7 @@ For this particular blog, the solution 2 will be the best and to make it easier,
 In order to avoid entering the SSH password on each connection, we can copy the SSH key:
 
 ```
-$ ssh-copy-id `hvc.exe ip -4 devlxvm | tr -d '\r'`
+ssh-copy-id `hvc.exe ip -4 devlxvm | tr -d '\r'`
 ```
 
 Bonus: the command `hvc.exe ssh` will also be impacted.
@@ -127,7 +127,7 @@ Now that the connectivity is in place, we can install all the components.
 We will start by installing LXD on the Ubuntu VM:
 
 ```
-### Connect to the VM (I will do it without the alias)$ hvc.exe ssh VM_NAME### Install LXD$ sudo apt install lxd lxd-client
+### Connect to the VM (I will do it without the alias)hvc.exe ssh VM_NAME### Install LXDsudo apt install lxd lxd-client
 ```
 
 ![Installing LXD on ubuntu](/images/ubuntu-lxd-install.png)
@@ -135,7 +135,7 @@ We will start by installing LXD on the Ubuntu VM:
 Once LXD installed, the storage for the containers needs to be configured:
 
 ```
-### Keep all the defaults or change only the storage pool name$ lxd init
+### Keep all the defaults or change only the storage pool namelxd init
 ```
 
 ![Storage configuration for LXD](/images/ubuntu-lxd-setup.png)
@@ -143,7 +143,7 @@ Once LXD installed, the storage for the containers needs to be configured:
 Now we can create our first container:
 
 ```
-### Create the container$ lxc launch ubuntu:18.04 first### Confirm that the container is created$ lxc list
+### Create the containerlxc launch ubuntu:18.04 first### Confirm that the container is createdlxc list
 ```
 
 ![First container created](/images/ubuntu-lxd-first-container.png)
@@ -153,8 +153,8 @@ Now we can create our first container:
 Based on [Stéphane's blog](https://stgraber.org/2016/04/12/lxd-2-0-remote-hosts-and-container-migration-612/), in order to enable the remote connection to LXD, we need to run the following 2 commands:
 
 ```
-### Set the port which LXD will listen to$ lxc config set core.https_address [::]:8443
-### Set a password for authenticating the remote clients$ lxc config set core.trust_password something-secure
+### Set the port which LXD will listen tolxc config set core.https_address [::]:8443
+### Set a password for authenticating the remote clientslxc config set core.trust_password something-secure
 ```
 
 Our server is now fully configured, time to configure our WSL client.
@@ -166,7 +166,7 @@ Due to the different distros available, please find the correct install method f
 My (current) distro for dev is ClearLinux, and as it's not listed, here is the way to install LXC:
 
 ```
-### Search which bundle contains LXD$ sudo swupd search LXD### Install the recommended bundle$ sudo swupd bundle-add linux-lts-dev
+### Search which bundle contains LXDsudo swupd search LXD### Install the recommended bundlesudo swupd bundle-add linux-lts-dev
 ```
 
 ![Install LXC on WSL ClearLinux](/images/wsl-lxc-install.png)
@@ -176,13 +176,13 @@ My (current) distro for dev is ClearLinux, and as it's not listed, here is the w
 We will add the remote LXD server and also will set it as default, so every "local" command will actually be run on the remote server:
 
 ```
-### Add the remote LXD server -> This will request the password we set on the server$ lxc remote add LXD_NAME `hvc.exe ip -4 VM_NAME | tr -d '\r'`
+### Add the remote LXD server -> This will request the password we set on the serverlxc remote add LXD_NAME `hvc.exe ip -4 VM_NAME | tr -d '\r'`
 ```
 
 ![Add the LXD remote server](/images/wsl-remote-setup.png)
 
 ```
-### Set the remote LXD server to be the default$ lxc remote switch LXD_NAME### Check the config$ lxc remote list
+### Set the remote LXD server to be the defaultlxc remote switch LXD_NAME### Check the configlxc remote list
 ```
 
 ![Set LXD remote server to be default](/images/wsl-remote-switch-default.png)
@@ -190,7 +190,7 @@ We will add the remote LXD server and also will set it as default, so every "loc
 Finally, let's create a new container from WSL directly to the remote LXD server:
 
 ```
-### Create new container$ lxc launch ubuntu:18.04 first-remote### Check if the container has been created with the local and remote command$ lxc list$ lxc list LXD_NAME:
+### Create new containerlxc launch ubuntu:18.04 first-remote### Check if the container has been created with the local and remote commandlxc listlxc list LXD_NAME:
 ```
 
 ![Create a container in the remote LXD server](/images/ubuntu-lxd-first-remote-container.png)
@@ -203,4 +203,4 @@ While this blog might be long to read (and was definitively long to write), the 
 
 As this blog states, there is still the DevLx piece missing, and I will add it as soon as possible. Until then, once this setup is done, you can continue from [Brian's github](https://github.com/bketelsen/devlx)
 
-> **_\>>> Nunix out <<<_**
+> _**\>>> Nunix out <<<**_

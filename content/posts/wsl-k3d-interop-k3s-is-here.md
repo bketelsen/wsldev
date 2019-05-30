@@ -52,7 +52,8 @@ Now that the base is installed, the installation of `k3d` is actually very basic
 As described on the [github page](https://github.com/rancher/k3d), the easyiest way is to run the install script:
 
 ```
-### Run the script with Wgetwget -q -O - https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash
+### Run the script with Wget
+wget -q -O - https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash
 
 ### or with Curl
 curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash

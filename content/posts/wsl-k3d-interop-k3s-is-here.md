@@ -10,6 +10,8 @@ tags:
   - docker
   - k3s
 url: /wslk3d
+categories:
+  - Kubernetes
 ---
 # Introduction
 
@@ -50,10 +52,9 @@ Now that the base is installed, the installation of `k3d` is actually very basic
 As described on the [github page](https://github.com/rancher/k3d), the easyiest way is to run the install script:
 
 ```
-wget -q -O - https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash
+### Run the script with Wgetwget -q -O - https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash
 
-or
-
+### or with Curl
 curl -s https://raw.githubusercontent.com/rancher/k3d/master/install.sh | bash
 ```
 
@@ -70,20 +71,20 @@ And concerning this script, as you may have noticed, do **not** run it as root, 
 Everything is now set, so it's time to test the environment:
 
 ```
-# Check k3d version
+### Check k3d version
 k3d --version
 
-# Create the first cluster > the name parameter is optional
+### Create the first cluster > the name parameter is optional
 k3d create --name wslk3s
 
-# Set $KUBECONFIG to the config file created by k3d
+### Set $KUBECONFIG to the config file created by k3d
 export KUBECONFIG="$(k3d get-kubeconfig --name='wslk3d')"
 
-# Check that the cluster is running
+### Check that the cluster is running
 k3d list
 kubectl cluster-info
 
-# Additional checks
+### Additional checks
 kubectl get pods --all-namespaces
 kubectl get services --all-namespaces
 ```
@@ -95,13 +96,13 @@ kubectl get services --all-namespaces
 If creating a cluster is fast and quite easy, deleting it is even easier:
 
 ```
-# Check the name of the active cluster
+### Check the name of the active cluster
 k3d list
 
-# Delete the active cluster
+### Delete the active cluster
 k3d delete --name wslk3d
 
-# Confirm that the cluster has been correctly deleted
+### Confirm that the cluster has been correctly deleted
 k3d list
 kubectl cluster-info
 ```
@@ -118,4 +119,4 @@ The goal is to rapidly reproduce an environment and therefore, delete it in orde
 
 I hope you will have as much fun as I did and stay tuned for bonus sections.
 
-> _**\>>> Nunix out <<<**_
+> **_\>>> Nunix out <<<_**

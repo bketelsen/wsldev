@@ -22,7 +22,7 @@ And before I write anything else, I truly want to Thank a person that simply is 
 
 Words cannot tell how much he does for the communities he's involved with and how many persons he helped. I'm simply lucky to be one of them.
 
- _**Merci infiniment mon Ami!**_ 
+ **_Merci infiniment mon Ami!_** 
 
 # Back to the blog
 
@@ -30,4 +30,4 @@ Now that the most important message is shared, I welcome you again to this blog 
 
 And if you do know or, even better, did something nice (read crazy) within WSL, please let us know and we will link or blog about it.
 
-> \>\>\> **Nunix out** <<<
+> _\>>> **Nunix out** <<<_

@@ -119,4 +119,4 @@ The goal is to rapidly reproduce an environment and therefore, delete it in orde
 
 I hope you will have as much fun as I did and stay tuned for bonus sections.
 
-> _**\>>> Nunix out <<<**_
+> **_\>>> Nunix out <<<_**

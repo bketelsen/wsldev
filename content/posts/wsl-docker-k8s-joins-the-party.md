@@ -168,4 +168,4 @@ Still, I really think that the moment we will be able to use the `Docker Desktop
 So do not hesitate to test this setup and find even better ways. And share, I'm as usual roaming in Twitter [@nunixtech](https://twitter.com/nunixtech)
 
 
-> > > \>\>\> *Nunix out* <<<
+> \>\>\> *Nunix out* <<<

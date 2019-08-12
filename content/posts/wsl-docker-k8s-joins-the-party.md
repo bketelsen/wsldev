@@ -48,10 +48,10 @@ Right after the Docker installation is done and the `WSL 2 Tech Preview` is acti
 ![](/images/docker-install-contexts.png)
 
 > TIP: if the `wsl` context is not the default (marked by an `*` near the name), run the following command:
->
-> ```powershell
-> PS> docker context use wsl
-> ```
+
+```powershell
+PS> docker context use wsl
+```
 
 ![](/images/docker-context-switch.png)
 

@@ -60,6 +60,7 @@ As we can see, the context **do not** have any `kubernetes endpoint` or even an 
 So let's add one with our _beloved_ K3d.
 
 ## Wait, why not using the default Docker Kubernetes?
+
 And that's a very good question. The issue here is how Kubernetes is setup within Docker Desktop.
 
 First we will need to add the same `kubernetes endpoint` than the `default` context.
@@ -89,6 +90,7 @@ I won't go to much in-depth here, specially because I still have to find a solut
 But if someone knows how to access it, then please feel free to share.
 
 ## K3d to save the day
+
 Back to our topic on how to add a `kubernetes endpoint` from WSL?
 
 First, a new `docker context` as the `default` context cannot be modified:
@@ -123,6 +125,7 @@ $ docker context update --kubernetes config-file=$KUBECONFIG --default-stack-orc
 > **NOTE:** as you can see in printscreen, it seems to have a "visual bug" with the default context. Upon restart of the daemon, the context will be correct again
 
 ## WSLENV makes it consistent
+
 While we have now both `wsl` contexts configured, there are literally not the same.
 
 And talking about contexts, we have also the `kubectl` contexts that are misaligned:
@@ -158,14 +161,50 @@ PS> kubectl.exe cluster-info
 
 ![](/images/docker-context-wslenv-switch.png)
 
-> **NOTE:** ensure to separate the paths by a semicolon "**;**" as we are in Windows, and not the usual colon "*:*"
+> **NOTE:** ensure to separate the paths by a semicolon "**;**" as we are in Windows, and not the usual colon "_:_"
 
 ## Conclusion
+
 All the technologies seem to work very well together and while I faced quite some (tough) challenges, the overall setup feels quite nice.
 
 Still, I really think that the moment we will be able to use the `Docker Desktop Kubernetes` endpoint from the Docker context inside `wsl`, then I think this setup will feel even more "light".
 
 So do not hesitate to test this setup and find even better ways. And share, I'm as usual roaming in Twitter [@nunixtech](https://twitter.com/nunixtech)
 
+> \>>> Nunix out <<<
 
-> \>\>\> *Nunix out* <<<
+## Bonus 1: Built-in Docker K8s connectivity
+
+In the steps above, we added a K8s on WSL, however what about the Docker Desktop K8s? Can we connect to it from WSL?
+
+
+Well, yes we can! And except for one little trick, the process is actually very straight forward:
+
+### Windows side
+
+* Ensure Docker Desktop is running on Linux Containers
+  ![](/images/docker-version-linux.png)
+* Enable Kubernetes on the Docker Desktop settings
+  ![](/images/docker-k8s-enable.png)
+* Setup the `KUBECONFIG` variable to be part of `WSLENV`
+  ![](/images/docker-k8s-wslenv.png)
+
+### WSL side
+
+* Launch a new Ubuntu session (needs to be the default WSL distro)
+
+![](/images/docker-k8s-wsl-default.png)
+
+* Check the variables and try to connect to the K8s cluster
+
+![](/images/docker-k8s-wsl-login.png)
+
+* Of course, the K8s cluster is not running on WSL2 `Localhost`, but on the Windows DockerDesktopVM. So let's correct the IP in the `/etc/hosts`
+
+![](/images/docker-k8s-wsl-connected.png)
+
+> TIP 1: I found the "external" IP of the DockerDesktopVM by looking at the Docker firewall rule "DockerSmbMount"
+>
+> TIP 2: if you want to avoid modifying everytime the `/etc/hosts` file, you can set stop the auto-generation by editing the flag at the top: `# generateHosts = false`
+
+And done, WSL is now configured to connect not only to Docker but also Kubernetes.

@@ -113,6 +113,44 @@ Still, the (huge) learning from this blog post is that Docker really helps getti
 
 I hope this shorter format will please you, as I might do some more between two bigger blog posts. This will help me adding a bit more context to the "discovery tweets" I do regularly.
 
-
-
 > _**\>>> Nunix out <<<**_
+
+# Bonus 1: a Snap and Microk8s appears
+
+Now that Docker is up and running, nowadays next step would be to add a Kubernetes context.
+
+In this first bonus, we will add MicroK8s. To make it easy, let's follow the official [guide](https://microk8s.io/docs/):
+
+```
+$ sudo snap install microk8s --classic
+$ microk8s.status --wait-ready
+$ sudo snap alias microk8s.kubectl mk
+$ mk cluster-info
+$ mk get nodes
+$ mk get services
+```
+
+![Installing Microk8s](/images/wsl-ermine-k8s-install.png)
+
+## But wait! There's more
+
+The goal is always to have a complete and integrated environment. To achieve that, some additional steps need to be performed.
+
+As described in the guide, couple addons should be installed
+
+```
+$ microk8s.enable dns dashboard
+$ mk cluster-info
+```
+
+![Adding addons and saving configuration](/images/wsl-ermine-k8s-addons.png)
+
+Finally, let's had our cluster as the Docker context endpoint:
+
+```
+$ docker context ls
+$ mk config view --raw > $HOME/.kube/config
+$ docker context ls
+```
+
+![Adding Microk8s endpoint to Docker context](/images/wsl-ermine-k8s-endpoint.png)

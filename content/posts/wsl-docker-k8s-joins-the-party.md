@@ -173,10 +173,11 @@ So do not hesitate to test this setup and find even better ways. And share, I'm 
 
 > \>>> Nunix out <<<
 
-## Bonus 1: Built-in Docker K8s connectivity
+## \[DEPRECATED] Bonus 1: Built-in Docker K8s connectivity
+
+**INFORMATION: after the Docker Desktop for Windows v2.1.6.0, the workaround below is no more needed. The `kubectl` command will successfully connect to the K8s cluster, even with the DNS entry `kubernetes.docker.internal` pointing to `127.0.0.1`.** 
 
 In the steps above, we added a K8s on WSL, however what about the Docker Desktop K8s? Can we connect to it from WSL?
-
 
 Well, yes we can! And except for one little trick, the process is actually very straight forward:
 

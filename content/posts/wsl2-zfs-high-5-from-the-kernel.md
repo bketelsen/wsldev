@@ -205,7 +205,7 @@ vi /mnt/c/Users/<username>/.wslconfig
 
 Exit your WSL2 shell and start Powershell as an administrator:
 
-```powershell
+```bash
 # Shutdown the WSL2 VM
 wsl --shutdown
 # Restart the LXSS process

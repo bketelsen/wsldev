@@ -66,7 +66,8 @@ tar -xJf linux-5.5.10.tar.xz
 
 ```bash
 # Install the build tools and the dependencies
-sudo apt install -yqq build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison
+sudo apt install -yqq build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison
 ```
 
 ![image-20200322154419391](/images/wsl2-kernel-zfs-packages-install.png)

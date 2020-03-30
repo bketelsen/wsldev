@@ -63,7 +63,7 @@ sudo lxd init
 
 ![image-20200329174031599](/images/wsl2-lxd-init.png)
 
-Once everything has been setup, let's try to connect to our newly setup LXD service:
+Once everything has been setup, let's try to connect to our newly LXD service:
 
 ```bash
 # List all created containers > this will result with an error

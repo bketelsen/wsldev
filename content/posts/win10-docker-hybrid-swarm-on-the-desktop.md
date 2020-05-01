@@ -6,10 +6,13 @@ description: Windows 10 and Docker Desktop unlimited
 tags:
   - windows 10
   - docker
+  - docker desktop
+  - docker swarm
   - wsl2
-  - portainer
+  - hyper-v
   - vagrant
   - multipass
+  - portainer
 url: /hybridswarm
 categories:
   - Docker
@@ -209,7 +212,7 @@ Out of the four nodes, we will have one as the manager (Windows) with three work
 
 It's small and really just for testing purpose, but it will be enough for us to have a view on how Swarm behaves and allocated resources.
 
-## Visualizer: show me thy graphics
+## Portainer: show me thy graphics
 
 And when we speak about resources "visualization", what better than a Web UI?
 

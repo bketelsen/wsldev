@@ -59,7 +59,7 @@ docker version
 docker info --format '{{ .OperatingSystem }}'
 ```
 
-![image-20200505130857772](/images/wsl2-docker-check-version.png)
+![image-20200505130857772](/images/wsl2-k3d-docker-check-version.png)
 
 * Install the latest version of K3d
 

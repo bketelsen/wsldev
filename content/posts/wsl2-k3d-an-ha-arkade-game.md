@@ -59,7 +59,7 @@ docker version
 docker info --format '{{ .OperatingSystem }}'
 ```
 
-![image-20200505130857772](images/wsl2-docker-check-version.png)
+![image-20200505130857772](/images/wsl2-docker-check-version.png)
 
 * Install the latest version of K3d
 
@@ -72,7 +72,7 @@ k3d --help
 k3d version
 ```
 
-![image-20200505131322450](images/wsl2-k3d-install.png)
+![image-20200505131322450](/images/wsl2-k3d-install.png)
 
 * Create a first cluster with the default settings for connectivity testing
 
@@ -86,7 +86,7 @@ kubectl cluster-info
 # [Optional] Open a browser and enter the URL https://localhost:6443
 ```
 
-![image-20200505134643494](images/wsl2-k3d-cluster-single-node.png)
+![image-20200505134643494](/images/wsl2-k3d-cluster-single-node.png)
 
 * Perfect, our cluster is reachable, so we can delete it
 
@@ -100,7 +100,7 @@ k3d get cluster
 kubectl cluster-info
 ```
 
-![image-20200505135333736](images/wsl2-k3d-cluster-delete-single-node.png)
+![image-20200505135333736](/images/wsl2-k3d-cluster-delete-single-node.png)
 
 Congratulations! The first stage is now clear, let's jump into the second stage.
 
@@ -125,7 +125,7 @@ kubectl cluster-info
 k3d get nodes
 ```
 
-![](images/wsl2-k3d-cluster-multi-node.png)
+![](/images/wsl2-k3d-cluster-multi-node.png)
 
 > NOTE: We have now a cluster with three masters and three workers. However as we can see, there's actually another node created at the same time. This is a Load Balancer that will be used as the single entry point to our nodes and more specifically the master nodes.
 
@@ -150,7 +150,7 @@ curl -sLS https://dl.get-arkade.dev | sudo sh
 ark --help
 ```
 
-![image-20200505165602275](images/wsl2-arkade-install.png)
+![image-20200505165602275](/images/wsl2-arkade-install.png)
 
 * List the applications that can be installed with Arkade
 
@@ -159,7 +159,7 @@ ark --help
 ark install --help
 ```
 
-![image-20200505165912083](images/wsl2-arkade-apps-install-options.png)
+![image-20200505165912083](/images/wsl2-arkade-apps-install-options.png)
 
 * Install Portainer
 
@@ -172,7 +172,7 @@ kubectl get all -n portainer
 kubectl port-forward -n portainer svc/portainer 9000:9000 &
 ```
 
-![](images/wsl2-arkade-portainer-install.png)
+![](/images/wsl2-arkade-portainer-install.png)
 
 ## Stage 3 - Bonus stage: The many doors of the Watchtower
 
@@ -194,7 +194,7 @@ kubectl get node -o wide
 # Open your WSL2 browser and enter the url http://<node IP>:<service port>
 ```
 
-![](images/wsl2-portainer-nodeport.png)
+![](/images/wsl2-portainer-nodeport.png)
 
 Cool, but actually there's something even cooler: remember that we have a loadbalancer installed by default? Well let's take advantage of it and instead of searching for the node port, we can access it through the Master IP:
 
@@ -204,7 +204,7 @@ kubectl get service --all-namespaces
 # Open your WSL2 browser and enter the url http://<master IP>:<service port>
 ```
 
-![image-20200509183228799](images/wsl2-portainer-nodeport-loadbalancer.png)
+![image-20200509183228799](/images/wsl2-portainer-nodeport-loadbalancer.png)
 
 ### NodePort: Access from Windows
 
@@ -235,7 +235,7 @@ ping <master IP> -n 1
 # Open your Windows browser and enter the url http://<master IP>:<service port>
 ```
 
-![image-20200506144328950](images/wsl2-portainer-nodeport-windows.png)
+![image-20200506144328950](/images/wsl2-portainer-nodeport-windows.png)
 
 ### NodePort: Access from Windows with Inlets
 
@@ -275,7 +275,7 @@ inlets client --remote=127.0.0.1:<Inlets server port> --upstream=<master IP>:<se
 # Open your Windows browser and enter the url http://localhost:<Inlets server port>
 ```
 
-![image-20200506153722092](images/wsl2-portainer-nodeport-inlets.png)
+![image-20200506153722092](/images/wsl2-portainer-nodeport-inlets.png)
 
 ### <a name="stage3lb"></a>LoadBalancer: Access from Windows with Ingress
 
@@ -310,11 +310,11 @@ kubectl get ingress -n portainer
 kubectl describe ingress -n portainer
 ```
 
-![image-20200511173423156](images/wsl2-portainer-loadbalancer-ingress.png)
+![image-20200511173423156](/images/wsl2-portainer-loadbalancer-ingress.png)
 
 Once created, open your Windows browser and enter the url http://<master IP>:<Ingress port>
 
-![image-20200511173630724](images/wsl2-portainer-loadbalancer-ingress-browser.png)
+![image-20200511173630724](/images/wsl2-portainer-loadbalancer-ingress-browser.png)
 
 > NOTE: the Ingress port has been set during the creation of the cluster `k3d create cluster <cluster name> --masters 3 --workers 3 --image rancher/k3s:v1.18.2-k3s1 --port <Ingress Port>:80@loadbalancer`
 
@@ -336,7 +336,7 @@ docker ps
 # Open your Windows browser and enter the url http://<master IP>:<Ingress port>
 ```
 
-![image-20200511174303124](images/wsl2-k3d-cluster-defense-status.png)
+![image-20200511174303124](/images/wsl2-k3d-cluster-defense-status.png)
 
 * Stop the node `master0` and check the status again > I did it over 1 minute to get to the final screen
 
@@ -350,7 +350,7 @@ docker ps
 # Open your Windows browser and enter the url http://<master IP>:<Ingress port>
 ```
 
-![image-20200511175504433](images/wsl2-k3d-cluster-defense-post-status.png)
+![image-20200511175504433](/images/wsl2-k3d-cluster-defense-post-status.png)
 
 As we can see, the cluster was heavily it by losing the `master0`, but again it's the most critical one. Still, even if it took down with him a second master and even a worker, thanks to the remaining master and two workers, the cluster is still operating in (very) degraded mode.
 
@@ -366,7 +366,7 @@ docker ps
 # Open your Windows browser and enter the url http://<master IP>:<Ingress port>
 ```
 
-![image-20200511180146919](images/wsl2-k3d-cluster-defense-back-status.png)
+![image-20200511180146919](/images/wsl2-k3d-cluster-defense-back-status.png)
 
 # Conclusion
 

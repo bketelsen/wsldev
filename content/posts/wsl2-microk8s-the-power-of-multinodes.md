@@ -40,7 +40,7 @@ The VM will need to have the `nested virtualization` enabled. This can be done o
 Set-VMProcessor -VMName mk8s -ExposeVirtualizationExtensions $true
 ```
 
-![image-20200316181857819](./images/win2019-enable-nested-virt.png)
+![image-20200316181857819](/images/win2019-enable-nested-virt.png)
 
 
 
@@ -56,7 +56,7 @@ Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
 
 For the second feature, you will be asked to reboot the server, say yes:
 
-![image-20200316172649586](./images/win2019-features-enabled.png)
+![image-20200316172649586](/images/win2019-features-enabled.png)
 
 > Tip: set Powershell as the default shell for the current user
 >
@@ -84,7 +84,7 @@ mkdir C:\wslsources
 mkdir C:\wsldistros
 ```
 
-![image-20200316174035027](./images/win2019-wsl2-base-dirs.png)
+![image-20200316174035027](/images/win2019-wsl2-base-dirs.png)
 
 > Tip: both directories were created at a level all users can access. It will be very useful for a later use.
 
@@ -98,7 +98,7 @@ Finally, we can import the `rootfs` as a WSL2 custom distro:
 wsl --import mk8s C:\wsldistros\mk8s C:\wslsources\focal.tar.gz --version 2
 ```
 
-![image-20200316182209240](./images/win2019-wsl2-import-focal.png)
+![image-20200316182209240](/images/win2019-wsl2-import-focal.png)
 
 > Tip: set WSL version 2 as the default for all new imported distros:
 >
@@ -123,14 +123,14 @@ Without further due, let's jump into our WSL shell:
 wsl
 ```
 
-![image-20200317194818059](./images/win2019-wsl2-shell.png)
+![image-20200317194818059](/images/win2019-wsl2-shell.png)
 
 ```bash
 # Update the system
 apt update && apt upgrade -y
 ```
 
-![image-20200317195148391](./images/win2019-wsl2-update.png)
+![image-20200317195148391](/images/win2019-wsl2-update.png)
 
 ```bash
 # Install the required packages for SystemD
@@ -141,7 +141,7 @@ useradd -m -s /bin/bash -G sudo mk8s
 passwd mk8s
 ```
 
-![image-20200317195347252](./images/win2019-wsl2-pkgs-useradd.png)
+![image-20200317195347252](/images/win2019-wsl2-pkgs-useradd.png)
 
 ```bash
 # Edit the sudoers to remove the password request
@@ -149,7 +149,7 @@ visudo
 	%sudo   ALL=(ALL:ALL) NOPASSWD: ALL
 ```
 
-![image-20200317195542876](./images/win2019-wsl2-visudo.png)
+![image-20200317195542876](/images/win2019-wsl2-visudo.png)
 
 > Tip: the help commands are written at the bottom of the console and the "^" character represents CTRL
 >
@@ -178,7 +178,7 @@ appendWindowsPath = true
 default = mk8s
 ```
 
-![image-20200317200901267](./images/win2019-wsl2-wslconf.png)
+![image-20200317200901267](/images/win2019-wsl2-wslconf.png)
 
 The basic configuration is now done, and before we move into the SystemD setup, let's quickly explain the main options of the `wsl.conf`.
 
@@ -217,7 +217,7 @@ if [ -n "$SYSTEMD_PID" ] && [ "$SYSTEMD_PID" != "1" ]; then
 fi
 ```
 
-![image-20200321004320994](./images/win2019-wsl2-systemd-profile.png)
+![image-20200321004320994](/images/win2019-wsl2-systemd-profile.png)
 
 > Tip: after few tests, I decided to go with the "old" solution. Feel free to use the new one based on two files and the edition of /etc/bash.bashrc
 
@@ -225,7 +225,7 @@ fi
 
 SystemD is now setup and ready to be used. So let's exit and start a new session with our newly SystemD.
 
-![image-20200317222037540](./images/win2019-wsl2-systemd.png)
+![image-20200317222037540](/images/win2019-wsl2-systemd.png)
 
 
 
@@ -240,7 +240,7 @@ sudo vi /etc/systemd/resolved.conf
 DNS=8.8.8.8
 ```
 
-![image-20200317222308545](./images/win2019-wsl2-systemd-resolved.png)
+![image-20200317222308545](/images/win2019-wsl2-systemd-resolved.png)
 
 To apply the config change, we need to restart the service and run an update to confirm it's working fine
 
@@ -249,7 +249,7 @@ sudo systemctl restart systemd-resolved
 sudo apt update
 ```
 
-![image-20200317225206935](./images/win2019-wsl2-systemd-resolved-updated.png)
+![image-20200317225206935](/images/win2019-wsl2-systemd-resolved-updated.png)
 
 
 
@@ -281,7 +281,7 @@ Let's see which snaps are already installed:
 snap list
 ```
 
-![image-20200318202137652](./images/win2019-wsl2-snap-list.png)
+![image-20200318202137652](/images/win2019-wsl2-snap-list.png)
 
 The important snap, Core, is already installed.
 
@@ -311,15 +311,15 @@ Create two new `string values` with the following names and values:
 - Name: CascadiaCodePL (TrueType)
   Value: CascadiaPL.ttf
 
-![image-20200318212046138](./images/win2019-cascadia-font-install.png)
+![image-20200318212046138](/images/win2019-cascadia-font-install.png)
 
 Close the registry and we are now able to select the fonts from the terminal properties (right click on the title bar > Properties)
 
-![image-20200318212257303](./images/win2019-cascadia-font-terminal.png)
+![image-20200318212257303](/images/win2019-cascadia-font-terminal.png)
 
 And now, let's run again the `snap list` command and enjoy new characters:
 
-![image-20200318212429689](./images/win2019-cascadia-font-selected.png)
+![image-20200318212429689](/images/win2019-cascadia-font-selected.png)
 
 
 
@@ -332,7 +332,7 @@ Before installing Microk8s snap, we can (should) have a look on the available Ku
 snap info microk8s
 ```
 
-![image-20200318213945644](./images/win2019-wsl2-mk8s-snap-info.png)
+![image-20200318213945644](/images/win2019-wsl2-mk8s-snap-info.png)
 
 At the writing of this blog post, the "latest/stable" version is 1.17.3, which is perfectly fine, so let's install this version:
 
@@ -347,7 +347,7 @@ sudo microk8s.kubectl version
 sudo microk8s.kubectl cluster-info
 ```
 
-![image-20200318215446883](./images/win2019-wsl2-mk8s-snap-install.png)
+![image-20200318215446883](/images/win2019-wsl2-mk8s-snap-install.png)
 
 
 
@@ -372,7 +372,7 @@ sudo microk8s.kubectl version
 sudo microk8s.kubectl cluster-info
 ```
 
-![image-20200318220426395](./images/win2019-wsl2-mk8s-snap-refresh.png)
+![image-20200318220426395](/images/win2019-wsl2-mk8s-snap-refresh.png)
 
 Great, in almost no time we moved from one channel to another. Try doing the same "the Kubernetes way" and you will appreciate very much this easiness and speed.
 
@@ -387,7 +387,7 @@ As you can see in the previous commands, `sudo` was used in order to launch the 
 microk8s.status
 ```
 
-![image-20200318221352230](./images/win2019-wsl2-mk8s-status-error.png)
+![image-20200318221352230](/images/win2019-wsl2-mk8s-status-error.png)
 
 As expected, the command could not be run and, even worse, the directory `.kube` is now owned by root.
 
@@ -405,7 +405,7 @@ wsl
 microk8s.status
 ```
 
-![image-20200318223716190](./images/win2019-wsl2-mk8s-status-fixed.png)
+![image-20200318223716190](/images/win2019-wsl2-mk8s-status-fixed.png)
 
 
 
@@ -420,7 +420,7 @@ By letting the users enable the addons *needed*, it allows microk8s to be lightw
 microk8s.enable dns dashboard
 ```
 
-![image-20200318233641307](./images/win2019-wsl2-mk8s-addons-enable.png)
+![image-20200318233641307](/images/win2019-wsl2-mk8s-addons-enable.png)
 
 The addons have been enabled quite fast (specially for new installs), and we can check the services by using the `kubectl` command:
 
@@ -431,7 +431,7 @@ microk8s.kubectl get all --all-namespaces
 microk8s.kubectl cluster-info
 ```
 
-![image-20200319000905819](./images/win2019-wsl2-mk8s-services-check.png)
+![image-20200319000905819](/images/win2019-wsl2-mk8s-services-check.png)
 
 
 
@@ -446,7 +446,7 @@ In order to visualize the Kubernetes dashboard, when need a browser. At first, i
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 ```
 
-![image-20200319180446488](./images/win2019-chocolatey-install.png)
+![image-20200319180446488](/images/win2019-chocolatey-install.png)
 
 As written, we might need to restart our console before being able to use the command `choco`.
 
@@ -459,7 +459,7 @@ After few tests, the one I will installed is [Brave browser](https://brave.com/)
 choco install brave
 ```
 
-![image-20200319181324578](./images/win2019-brave-install.png)
+![image-20200319181324578](/images/win2019-brave-install.png)
 
 > Tip: Brave browser is installed in `${HOME}\AppData\Local\BraveSoftware\Brave-Browser\Application\brave.exe`
 >
@@ -479,7 +479,7 @@ microk8s.kubectl cluster-info
 $BROWSER https://localhost:16443
 ```
 
-![image-20200319210231212](./images/win2019-wsl2-mk8s-management-url.png)
+![image-20200319210231212](/images/win2019-wsl2-mk8s-management-url.png)
 
 Success! What we can see here is that the port `16443` open on the WSL2 VM, has been correctly forwarded to the Windows side.
 
@@ -497,11 +497,11 @@ $BROWSER https://localhost:10443
 # Click Advanced > Click Proceed to Localhost > Choose Token and past your token
 ```
 
-![image-20200319213437116](./images/win2019-wsl2-mk8s-dashboard-token.png)
+![image-20200319213437116](/images/win2019-wsl2-mk8s-dashboard-token.png)
 
 Once you click `Sign in` you will arrive at the "Overview" section of the Dashboard
 
-![image-20200319213635472](./images/win2019-wsl2-mk8s-dashboard-overview.png)
+![image-20200319213635472](/images/win2019-wsl2-mk8s-dashboard-overview.png)
 
 
 
@@ -520,7 +520,7 @@ ifconfig eth0
 microk8s.enable metallb
 ```
 
-![image-20200319215134713](./images/win2019-wsl2-mk8s-metallb-install.png)
+![image-20200319215134713](/images/win2019-wsl2-mk8s-metallb-install.png)
 
 > Tip: This address will refresh after each login. For a permanent solution, create a virtual interface with a static IP address as explained later in this blog post.
 
@@ -536,7 +536,7 @@ microk8s.kubectl edit service/kubernetes-dashboard -n kube-system
 # Delete the last two lines and edit the "type" from ClusterIP to LoadBalancer
 ```
 
-![image-20200319222516745](./images/win2019-wsl2-mk8s-dashboard-service-edit.png)
+![image-20200319222516745](/images/win2019-wsl2-mk8s-dashboard-service-edit.png)
 
 ```bash
 # Check the updated service and copy the exported port
@@ -544,7 +544,7 @@ microk8s.kubectl get service/kubernetes-dashboard -n kube-system
 # Browse to https://localhost:<external port>
 ```
 
-![image-20200319222406524](./images/win2019-wsl2-mk8s-dashboard-loadbalancer.png)
+![image-20200319222406524](/images/win2019-wsl2-mk8s-dashboard-loadbalancer.png)
 
 And here we have, the service was exported with an external port, and it allowed us to connect to the Dashboard.
 
@@ -593,7 +593,7 @@ New-LocalUser $user1 -Password $Password -FullName "Microk8s Node 1 user"
 New-LocalUser $user2 -Password $Password -FullName "Microk8s Node 2 user"
 ```
 
-![image-20200320201946154](./images/win2019-nodes-users-create.png)
+![image-20200320201946154](/images/win2019-nodes-users-create.png)
 
 Before continuing with the users, let's export the WSL2 distro from our first node, so we can import a configured distro:
 
@@ -606,7 +606,7 @@ wsl --export mk8s C:\wslsources\mk8s.tar.gz
 dir C:\wslsources\
 ```
 
-![image-20200320202914516](./images/win2019-wsl2-export-file.png)
+![image-20200320202914516](/images/win2019-wsl2-export-file.png)
 
 We have the final piece, so let's resume the creation of our users and import the distro:
 
@@ -617,7 +617,7 @@ runas /user:$user1 /savecred powershell.exe
 runas /user:$user2 /savecred powershell.exe
 ```
 
-![image-20200320210054929](./images/win2019-nodes-users-login.png)
+![image-20200320210054929](/images/win2019-nodes-users-login.png)
 
 > Tip: by default, the two terminals have the "consolas" font, now that we have already imported the new fonts, we can select them from the fonts menu
 
@@ -632,7 +632,7 @@ wsl --import mk8s C:\wsldistros\mk8s-$env:USERNAME C:\wslsources\mk8s.tar.gz --v
 wsl -l -v
 ```
 
-![image-20200320225045439](./images/win2019-nodes-distro-import.png)
+![image-20200320225045439](/images/win2019-nodes-distro-import.png)
 
 Let's start our WSL sessions and see how fast it was to have a pre-installed distro:
 
@@ -645,7 +645,7 @@ microk8s.status
 ps -ef
 ```
 
-![image-20200320233156131](./images/win2019-nodes-wsl2-check.png)
+![image-20200320233156131](/images/win2019-nodes-wsl2-check.png)
 
 
 
@@ -675,7 +675,7 @@ ping 80.0.0.20 -c 2
 ping 80.0.0.30 -c 2
 ```
 
-![image-20200320235241654](./images/win2019-wsl2-virtual-interfaces.png)
+![image-20200320235241654](/images/win2019-wsl2-virtual-interfaces.png)
 
 To make this virtual interface permanent, let's create a script file and add it to `/etc/bash.bashrc` so it runs at each login:
 
@@ -686,7 +686,7 @@ sudo vi /usr/local/bin/addvnet.sh
 sudo chmod +x /usr/local/bin/addvnet.sh
 ```
 
-![image-20200321005530440](./images/win2019-wsl2-addvnet.png)
+![image-20200321005530440](/images/win2019-wsl2-addvnet.png)
 
 
 
@@ -720,7 +720,7 @@ sudo vi /etc/hosts
 80.0.0.30       mk8snode2
 ```
 
-![image-20200320235735761](./images/win2019-wsl2-hosts.png)
+![image-20200320235735761](/images/win2019-wsl2-hosts.png)
 
 As we are running SystemD, we will need to change the `cloud-init` configuration file in order to allow the hostname change with `hostnamectl` to be persistent:
 
@@ -740,7 +740,7 @@ sudo hostnamectl set-hostname mk8snode2
 hostnamectl
 ```
 
-![image-20200321000726975](./images/win2019-wsl2-hostnames.png)
+![image-20200321000726975](/images/win2019-wsl2-hostnames.png)
 
 > Tip: our bash prompt still shows the "old" hostname, to update it, just exit and start a new WSL session.
 >
@@ -764,7 +764,7 @@ hostnamectl set-hostname mk8snode1
 hostnamectl set-hostname mk8snode2
 ```
 
-![image-20200321010330933](./images/win2019-wsl2-addvnet-hostnamectl.png)
+![image-20200321010330933](/images/win2019-wsl2-addvnet-hostnamectl.png)
 
 
 
@@ -781,7 +781,7 @@ microk8s.kubectl get nodes
 microk8s.status | grep enabled
 ```
 
-![image-20200321011333183](./images/win2019-wsl2-mk8s-list-single-nodes.png)
+![image-20200321011333183](/images/win2019-wsl2-mk8s-list-single-nodes.png)
 
 Let's add the two worker nodes:
 
@@ -798,7 +798,7 @@ microk8s.join <MasterIP>:25000/<serial>
 microk8s.kubectl get nodes
 ```
 
-![image-20200321012050162](./images/win2019-wsl2-mk8s-cluster-created.png)
+![image-20200321012050162](/images/win2019-wsl2-mk8s-cluster-created.png)
 
 And here we have, a three nodes cluster.  Behind the scenes, Microk8s did apply the addons configuration to the other two nodes.
 
@@ -813,7 +813,7 @@ microk8s.kubectl get all -n ingress
 microk8s.kubectl get pods -n ingress -o wide
 ```
 
-![image-20200321183946879](./images/win2019-wsl2-mk8s-ingress-install.png)
+![image-20200321183946879](/images/win2019-wsl2-mk8s-ingress-install.png)
 
 
 
@@ -841,7 +841,7 @@ microk8s.kubectl get services
 # Browse to http://localhost:<external port used>
 ```
 
-![image-20200321195758555](./images/win2019-wsl2-mk8s-deployment-microbot.png)
+![image-20200321195758555](/images/win2019-wsl2-mk8s-deployment-microbot.png)
 
 Our microbot deployment is a success!
 
@@ -851,7 +851,7 @@ Our microbot deployment is a success!
 
 While the initial setup can be a little bit heavy, once done we could see that the Microk8s was acting as intended and the complete load on RAM (OS + three WSL instances + Microk8s three nodes) is around 9Go (~75% of the 12Go total):
 
-![image-20200321200845620](./images/win2019-ram-load.png)
+![image-20200321200845620](/images/win2019-ram-load.png)
 
 In the long run, WSL2 will get even better and more performant. But in this blog post, as during my WSLConf demo, the real "pandora box" that was opened is the installation of Linux servers on a Windows Server Core thanks to WSL2.
 

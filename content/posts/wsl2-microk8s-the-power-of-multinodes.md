@@ -114,7 +114,7 @@ With WSL2 installed and our first distro imported, we perform the basic configur
 
 The `rootfs` does not have a user except root and is not "optimized" for WSL, yet.
 
-And in addition to the basic configuration, we will also enable SystemD thanks to the ["hack"](https://forum.snapcraft.io/t/running-snaps-on-wsl2-insiders-only-for-now/13033) from [@diddledan](https://twitter.com/diddledan)
+And in addition to the basic configuration, we will also enable SystemD thanks to the [scripts](https://forum.snapcraft.io/t/running-snaps-on-wsl2-insiders-only-for-now/13033) from [@diddledan](https://twitter.com/diddledan)
 
 Without further due, let's jump into our WSL shell:
 

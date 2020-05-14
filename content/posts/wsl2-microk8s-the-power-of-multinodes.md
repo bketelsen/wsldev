@@ -102,9 +102,9 @@ wsl --import mk8s C:\wsldistros\mk8s C:\wslsources\focal.tar.gz --version 2
 
 > Tip: set WSL version 2 as the default for all new imported distros:
 >
-> ```powershell
-> wsl --set-default-version 2
-> ```
+```powershell
+wsl --set-default-version 2
+```
 
 
 

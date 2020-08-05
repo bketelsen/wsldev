@@ -377,7 +377,7 @@ There is multiple ways to create an Azure File share, and as we are already in t
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
-![](images/az-install.png)
+![](/images/az-install.png)
 
 - Login with `az` to our Azure account
 
@@ -385,7 +385,7 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 az login
 ```
 
-![](images/az-login.png)
+![](/images/az-login.png)
 
 - List the resource groups created
 
@@ -393,12 +393,12 @@ az login
 az group list
 ```
 
-![](images/az-group-list.png)
+![](/images/az-group-list.png)
 
 > *Note:* if we want to find only a single value that contains the word "Docker" in the name, we can use the `--query` option
 > *Example:* `az group list --query "[?contains(name, 'docker')]"`
 
-![](images/az-group-list-docker.png)
+![](/images/az-group-list-docker.png)
 
 ## Azure File share: what a stateful place to be
 Now that we knowthe exact name of the resource group created by Docker, we can reuse it in order to keep everything "clean" and create our Azure File share in it.
@@ -414,7 +414,7 @@ export ACI_PERS_LOCATION=westeurope
 export ACI_PERS_SHARE_NAME=dockershare
 ```
 
-![](images/az-variables.png)
+![](/images/az-variables.png)
 
 **Attention:** The Azure Storage Account Name needs to be globally unique, so a `random` value is added to the end
 
@@ -428,7 +428,7 @@ az storage account create \
     --sku Standard_LRS
 ```
 
-![](images/az-storage-create.png)
+![](/images/az-storage-create.png)
 
 - Create the Azure File share
 
@@ -438,7 +438,7 @@ az storage share create \
   --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME
 ```
 
-![](images/az-file-share-create.png)
+![](/images/az-file-share-create.png)
 
 - Get the Azure Storage account key
 
@@ -448,7 +448,7 @@ export ACI_PERS_STORAGE_ACCOUNT_KEY=$(az storage account keys list --resource-gr
 echo $ACI_PERS_STORAGE_ACCOUNT_KEY
 ```
 
-![](images/az-storage-key.png)
+![](/images/az-storage-key.png)
 
 ## Volume: once local, now global
 We have now all the values needed for using a volume with our Docker containers.
@@ -463,7 +463,7 @@ docker context use azurecloud
 docker run --help
 ```
 
-![](images/docker-volume-help.png)
+![](/images/docker-volume-help.png)
 
 As we can see in the picture above, the `--volume` option needs the following value for the "local" mount: `user:key@my_share`.
 
@@ -475,7 +475,7 @@ The rest of the command is the same as we know, so let's run a container with th
 az storage file list --share-name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY
 ```
 
-![](images/az-file-list-pre-container.png)
+![](/images/az-file-list-pre-container.png)
 
 - Create the container
 
@@ -487,11 +487,11 @@ docker ps
 # Open a browser to the IP address from the container
 ```
 
-![](images/docker-volume-container-create.png)
+![](/images/docker-volume-container-create.png)
 
 - Create a file from the container application
 
-![](images/docker-volume-create-file.png)
+![](/images/docker-volume-create-file.png)
 
 - List the files in the Azure File share to confirm the creation of the file
 
@@ -499,7 +499,7 @@ docker ps
 az storage file list --share-name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY
 ```
 
-![](images/az-file-list-post-container.png)
+![](/images/az-file-list-post-container.png)
 
 - Get the name of the file and store it into a variable
 
@@ -509,7 +509,7 @@ export azfilename=$(az storage file list --share-name $ACI_PERS_SHARE_NAME --acc
 echo $azfilename
 ```
 
-![](images/az-file-get-name.png)
+![](/images/az-file-get-name.png)
 
 - Download the file
 
@@ -517,7 +517,7 @@ echo $azfilename
 az storage file download --share-name $ACI_PERS_SHARE_NAME --path "$azfilename" --dest "$PWD/$azfilename" --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY
 ```
 
-![](images/az-file-download.png)
+![](/images/az-file-download.png)
 
 - Check the content of the file
 
@@ -527,7 +527,7 @@ ls $PWD/$azfilename
 cat $PWD/$azfilename
 ```
 
-![](images/az-file-check-content.png)
+![](/images/az-file-check-content.png)
 
 - Finally, remove the container
 
@@ -539,7 +539,7 @@ docker rm dockeracivol
 docker ps
 ```
 
-![](images/docker-volume-container-remove.png)
+![](/images/docker-volume-container-remove.png)
 
 ## Bonus 1: Conclusion
 While it requested additional preparation, deploying a container with an Azure File share as a volume is still made very simple by Docker.

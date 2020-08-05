@@ -14,6 +14,7 @@ categories:
   - Cloud
 ---
 # Introduction
+
 What if Docker Desktop could help us run our containerized applications in the Cloud *just like that?*
 A dream? well no more! Since the [Docker Desktop Edge 2.3.2](https://www.docker.com/blog/running-a-container-in-aci-with-docker-desktop-edge/), we can now add a context for the [Azure Container Instances (ACI)](https://docs.microsoft.com/en-us/azure/container-instances/).
 
@@ -23,21 +24,24 @@ And the best of it, thanks to the WSL integration, we can run everything from ou
 So let's jump into the action and reach for the Cloud.
 
 # Sources
+
 Before we start going through all the steps, please note that this blog post is **heavily** based on the excellent [blog post](https://www.docker.com/blog/running-a-container-in-aci-with-docker-desktop-edge/) by [Ben De ST Paer-Gotch](https://twitter.com/Nebuk89).
 
 # Prerequisites
+
 As usual, in order to ensure our setup will be "as near" as the one used, here is the list of prerequisites:
 
 * OS: Windows 10 with the latest update (2004)
-	* For this setup, Windows 10 Insider on Dev channel v20175 is the one used
+  		* For this setup, Windows 10 Insider on Dev channel v20175 is the one used
 * WSL2: [a Store or Custom distro](https://wiki.ubuntu.com/WSL)
 * Docker Desktop Edge v2.3.4.0
-* [Optional] Windows 10 application installer [`winget`](https://github.com/microsoft/winget-cli) v0.1.41821 Preview
-* [Optional] [Windows Terminal](https://github.com/microsoft/terminal)
+* \[Optional] Windows 10 application installer [`winget`](https://github.com/microsoft/winget-cli) v0.1.41821 Preview
+* \[Optional] [Windows Terminal](https://github.com/microsoft/terminal)
 
 Finally, as the goal is to run the containers in Azure Container Instances, an [Azure account](https://azure.microsoft.com/en-us/free/) will be needed.
 
 # Installation: Winget it
+
 Before we can start, we will need to install Docker Desktop Edge. And in order to do it *the easiest way possible*, Windows has now its own, Open Source, package manager: [Winget](https://github.com/microsoft/winget-cli).
 
 Launch Powershell in a Terminal as Administrator and let's install Docker Desktop on Windows:
@@ -94,6 +98,7 @@ docker run -d -p 80:80 docker/getting-started
 As we can see in the image above, thanks to WSL2 ports mapping, we can reach the container hosted website from a Windows browser. 
 
 # Local or cloud: it depends on the context
+
 For anyone who already worked with Docker, the step before is nothing new. We "simply" ran a container on our local computer.
 
 So how do we move from our local computer to the Cloud? Well, meet a (not so much) new Docker concept: contexts.
@@ -114,7 +119,7 @@ docker context ls
 ![](/images/docker-context-list.png)
 
 > *Note:* As we can see in the image above, Docker Desktop Edge creates a link in WSL `.docker` directory for the contexts towards the `.docker` directory in our Windows user home directory.
-This small tweak is actually very intelligent as it allows Windows and WSL2 environments to share the same contexts.
+> This small tweak is actually very intelligent as it allows Windows and WSL2 environments to share the same contexts.
 
 * Login into Azure from Docker
 
@@ -130,7 +135,7 @@ docker login azure
 ![](/images/docker-login-azure-success.png)
 
 > **Attention:** On Linux, the package `xdg-utils` needs to be installed as the login process will launch a webpage page.
-So, if the package is not installed, we might have the following error:
+> So, if the package is not installed, we might have the following error:
 
 ![](/images/docker-login-azure-error.png)
 
@@ -166,6 +171,7 @@ docker context ls
 Now that we have our new ACI context created, we can deploy containers into the cloud.
 
 # The whale is swimming in the Azure cloud
+
 With the context created, we will deploy *the exact same* container as we did locally and, even more beautiful, we will use the *exact same command*.
 
 * Deploy the container into ACI
@@ -218,6 +224,7 @@ Congratulations! We have have successfully created and deleted a container in AC
 Now, let's have a quick look on the other tool that will help us a lot (read: another blog post will be necessary): `docker compose`.
 
 # Compose: a Cloud maestro
+
 Let's be real, nowadays the chance of having an application that runs only with one container is quite rare.
 So in order to ensure the Docker users (and yes, not only Devs ;) would have an identical experience while deploying to the Cloud, the awesome `docker compose` has been updated.
 
@@ -341,6 +348,7 @@ docker compose down -f docker-compose-aci.yaml
 ![](/images/azure-aci-compose-container-list-refresh.png)
 
 # Conclusion
+
 When writing the blog posts, there is so much tests before getting the final solution that we lose track of the time.
 Still, in this particular case, all the steps really worked fine and almost from the very first try. All, except for the `docker compose` part where the ACI integration showed some limitations.
 
@@ -348,5 +356,192 @@ Now, these limitations will either be covered in the future or alternatives will
 
 I really hope this blog will be helpful and not only a "simple ripoff" of Ben's blog and as always, if anyone have a comment or question, I can be found on Twitter [@nunixtech](https://twitter.com/nunixtech)
 
-
 > \>>> Nunix out <<<
+
+---
+
+# Bonus 1: What is a Cloud without Volume
+Now that we could run single container and a Compose application in the Cloud, let's make it even more fun by adding a volume. Once again, we will try it with a single container first.
+
+Before we deploy the container, we will need to create an Azure File share as explained in this excellent [Azure blog post](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files).
+This is needed as, for now at least, we cannot create a volume in Azure with Docker cli.
+
+Ok, enough talk, let's continue the fun.
+
+## Azure CLI: knocking on Azure's door
+There is multiple ways to create an Azure File share, and as we are already in the "console realm", let's stay there and use the powerfull `az` command:
+
+- Install the `az` command in WSL as described [here](curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash)
+
+```bash
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+![](images/az-install.png)
+
+- Login with `az` to our Azure account
+
+```bash
+az login
+```
+
+![](images/az-login.png)
+
+- List the resource groups created
+
+```bash
+az group list
+```
+
+![](images/az-group-list.png)
+
+> *Note:* if we want to find only a single value that contains the word "Docker" in the name, we can use the `--query` option
+> *Example:* `az group list --query "[?contains(name, 'docker')]"`
+
+![](images/az-group-list-docker.png)
+
+## Azure File share: what a stateful place to be
+Now that we knowthe exact name of the resource group created by Docker, we can reuse it in order to keep everything "clean" and create our Azure File share in it.
+
+As defined in the [blog post](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files), we will first define the variables, easier for reusability, and then create the Azure File share, which is part of the Azure Storage account.
+
+- Define the variables
+
+```bash
+export ACI_PERS_RESOURCE_GROUP=docker-aci-rg
+export ACI_PERS_STORAGE_ACCOUNT_NAME=dockerstorage$RANDOM
+export ACI_PERS_LOCATION=westeurope
+export ACI_PERS_SHARE_NAME=dockershare
+```
+
+![](images/az-variables.png)
+
+**Attention:** The Azure Storage Account Name needs to be globally unique, so a `random` value is added to the end
+
+- Create the Azure Storage account
+
+```bash
+az storage account create \
+    --resource-group $ACI_PERS_RESOURCE_GROUP \
+    --name $ACI_PERS_STORAGE_ACCOUNT_NAME \
+    --location $ACI_PERS_LOCATION \
+    --sku Standard_LRS
+```
+
+![](images/az-storage-create.png)
+
+- Create the Azure File share
+
+```bash
+az storage share create \
+  --name $ACI_PERS_SHARE_NAME \
+  --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME
+```
+
+![](images/az-file-share-create.png)
+
+- Get the Azure Storage account key
+
+```bash
+export ACI_PERS_STORAGE_ACCOUNT_KEY=$(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --query "[0].value" --output tsv)
+
+echo $ACI_PERS_STORAGE_ACCOUNT_KEY
+```
+
+![](images/az-storage-key.png)
+
+## Volume: once local, now global
+We have now all the values needed for using a volume with our Docker containers.
+
+This is great, however mapping volumes will be slightly different from the ones we normally have locally.
+And the best way to find what difference it could be, let's see what the help says:
+
+```bash
+# Ensure the context is the ACI one
+docker context use azurecloud
+
+docker run --help
+```
+
+![](images/docker-volume-help.png)
+
+As we can see in the picture above, the `--volume` option needs the following value for the "local" mount: `user:key@my_share`.
+
+The rest of the command is the same as we know, so let's run a container with the image used in the [blog post](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-volume-azure-files).
+
+- List the content in the Azure File share
+
+```bash
+az storage file list --share-name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY
+```
+
+![](images/az-file-list-pre-container.png)
+
+- Create the container
+
+```bash
+docker run -d --name dockeracivol -p 80:80 -v $ACI_PERS_STORAGE_ACCOUNT_NAME:$ACI_PERS_STORAGE_ACCOUNT_KEY@$ACI_PERS_SHARE_NAME:/aci/logs mcr.microsoft.com/azuredocs/aci-hellofiles
+
+docker ps
+
+# Open a browser to the IP address from the container
+```
+
+![](images/docker-volume-container-create.png)
+
+- Create a file from the container application
+
+![](images/docker-volume-create-file.png)
+
+- List the files in the Azure File share to confirm the creation of the file
+
+```bash
+az storage file list --share-name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY
+```
+
+![](images/az-file-list-post-container.png)
+
+- Get the name of the file and store it into a variable
+
+```bash
+export azfilename=$(az storage file list --share-name $ACI_PERS_SHARE_NAME --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY --query "[].name" -o tsv)
+
+echo $azfilename
+```
+
+![](images/az-file-get-name.png)
+
+- Download the file
+
+```bash
+az storage file download --share-name $ACI_PERS_SHARE_NAME --path "$azfilename" --dest "$PWD/$azfilename" --account-name $ACI_PERS_STORAGE_ACCOUNT_NAME --account-key $ACI_PERS_STORAGE_ACCOUNT_KEY
+```
+
+![](images/az-file-download.png)
+
+- Check the content of the file
+
+```bash
+ls $PWD/$azfilename
+
+cat $PWD/$azfilename
+```
+
+![](images/az-file-check-content.png)
+
+- Finally, remove the container
+
+```bash
+docker ps
+
+docker rm dockeracivol
+
+docker ps
+```
+
+![](images/docker-volume-container-remove.png)
+
+## Bonus 1: Conclusion
+While it requested additional preparation, deploying a container with an Azure File share as a volume is still made very simple by Docker.
+
+This part also showed that our Azure knowledge can be leveraged and, once again, anything in the Cloud could be managed from our Terminal in our computer. Welcome to the Cloud CLI golden age.

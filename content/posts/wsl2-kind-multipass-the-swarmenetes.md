@@ -34,23 +34,24 @@ The Corsair welcomes you to his new boat: the Swarmenetes.
 
 This blog post is intended to be followed, locally, from any OS (reaching Cloud Native nirvana). Still, in order to give you a background, the following technologies are the ones being used in this blog post:
 
-- OS: Windows 10 Professional version 2004 - channel: release (not Insiders, as incredible as it can be)
-- WSL OS: [Ubuntu 20.04](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71) from the Windows Store
-  - WSL version: 2
-- WSL kernel: original version and updated via `wsl --update`
-  - Version: 5.4.51-microsoft-standard-WSL2
-- Virtualization: 
-  - Local driver: Hyper-V
-  - Multipass guest OS: Ubuntu 20.04 LTS
-- Docker: [installed on WSL2 distro](https://docs.docker.com/engine/install/ubuntu/) 
-  - Version: 19.03.13
-  - User type: [anonymous](https://www.docker.com/increase-rate-limits)
-- [Optional] Terminal: [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701)
-  - Version: 1.3.2651.0
+* OS: Windows 10 Professional version 2004 - channel: release (not Insiders, as incredible as it can be)
+* WSL OS: [Ubuntu 20.04](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71) from the Windows Store
 
-## Docker Hub limits: how much will it cost?
+  * WSL version: 2
+* WSL kernel: original version and updated via `wsl --update`
 
-TBD
+  * Version: 5.4.51-microsoft-standard-WSL2
+* Virtualization: 
+
+  * Local driver: Hyper-V
+  * Multipass guest OS: Ubuntu 20.04 LTS
+* Docker: [installed on WSL2 distro](https://docs.docker.com/engine/install/ubuntu/) 
+
+  * Version: 19.03.13
+  * User type: [anonymous](https://www.docker.com/increase-rate-limits)
+* \[Optional] Terminal: [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701)
+
+  * Version: 1.3.2651.0
 
 # Building two nodes
 
@@ -70,7 +71,7 @@ If the prerequisites are installed (it won't  be explain in this blog), then we 
 
 ![WSL2 Docker integrated](/images/wsl-docker-version.png)
 
-### [Optional] Docker is not starting?
+### \[Optional] Docker is not starting?
 
 If the command `sudo service docker status` shows that Docker is not running, it might be due to an issue with iptables.
 
@@ -124,11 +125,11 @@ kubectl version
 
 > *Note: the last command shows a connection refused. This is normal as there is still no Kubernetes server running. So we can consider it as a warning and not error*
 
- ```bash
+```bash
 # Source documentation: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 # Install (potential) dependencies packages
 sudo apt update && sudo apt install -y apt-transport-https curl
- ```
+```
 
 ![WSL2 kubeadm dependencies install](/images/wsl-kubeadm-dependencies.png)
 
@@ -293,8 +294,6 @@ kubeadm version
 
 ![Multipass Kubernetes tools install](/images/multipass-k8s-tools-install.png)
 
-
-
 At this point, we have everything ready on the *second host*, and before you create our cluster, we need to setup the network in a "very special" way.
 
 # WSL finally meets Hyper-V
@@ -400,8 +399,8 @@ The two nodes Swarm cluster is now created. We can create our network.
 
 Now that we have our nodes connected, we still need to use a common network. By default, Docker Swarm creates two networks as described in the [official documentation](https://docs.docker.com/network/overlay/) and cited here:
 
-- an overlay network called `ingress`, which handles control and data traffic related to swarm services. When you create a swarm service and do not connect it to a user-defined overlay network, it connects to the `ingress` network by default.
-- a bridge network called `docker_gwbridge`, which connects the individual Docker daemon to the other daemons participating in the swarm.
+* an overlay network called `ingress`, which handles control and data traffic related to swarm services. When you create a swarm service and do not connect it to a user-defined overlay network, it connects to the `ingress` network by default.
+* a bridge network called `docker_gwbridge`, which connects the individual Docker daemon to the other daemons participating in the swarm.
 
 However, both networks are exclusively used for deploying Docker Swarm services or stacks. In our case, we need to attach "standalone containers" to a Swarm network.
 
@@ -641,8 +640,6 @@ docker exec swarmenetes-mate-control-plane bash -c "echo '10.0.1.2        swarme
 
 ![image-20201116165954554](/images/multipass-kind-cluster-multinode-hostname-add.png)
 
-
-
 ### Reset before joining
 
 Before we can run the `join` command against our cluster on the second node, we need to, literally, reset its configuration.
@@ -722,7 +719,5 @@ When blogging about WSL and/or simply being part of this incredible community, w
 The Cloud Native world is no different and I hope this blog post can show that when we mix different technologies, maybe, something totally cool (and potentially useless, I must admit) can be created.
 
 And even if this blog is really not meant to be run elsewhere than on our own computer(s), the learning it provided for the different layers is the big gain, at least for me. And I really hope you will gain something from it too.
-
- 
 
 > ***\>>> Nunix out <<<***

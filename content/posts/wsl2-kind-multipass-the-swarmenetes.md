@@ -4,6 +4,7 @@ author: nunix
 date: 2020-11-16T17:06:57.641Z
 description: Can two Cloud Native technologies mix? Like Swarm and Kubernetes?
   Competitors you say? Allies they are!
+image: /images/multipass-create-vm.png
 tags:
   - wsl2
   - docker

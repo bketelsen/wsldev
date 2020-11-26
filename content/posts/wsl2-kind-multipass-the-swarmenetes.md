@@ -721,3 +721,55 @@ The Cloud Native world is no different and I hope this blog post can show that w
 And even if this blog is really not meant to be run elsewhere than on our own computer(s), the learning it provided for the different layers is the big gain, at least for me. And I really hope you will gain something from it too.
 
 > ***\>>> Nunix out <<<***
+
+---
+
+# Bonus 1: Lessons learned "the Kelsey way"
+
+Normally, as bonus sections we have additional steps for configuring or enable features. However, due to the (very) improbable setup we just did, there was its good share of lessons learned the (very) hard way and which are a perfect follow-up for this unusual blog post.
+
+## Lesson 1: reading the manual always comes too late
+
+Let us start with what we could think about a "no brainer": every time we want to implement something we first read the manual right? ... right??
+
+Well, yes we do, but certainly not extensively and while writing this blog post, it was no different. Initially, Docker Desktop was used for the WSL node. Everything in this blog was going just fine, until the Swarm cluster was needed.
+
+Docker Desktop allows us to create a Swarm cluster ... [with a single node](https://docs.docker.com/engine/swarm/swarm-tutorial/#use-docker-desktop-for-mac-or-docker-desktop-for-windows):
+
+> Currently, you cannot use Docker Desktop for Mac or Docker Desktop for Windows alone to test a *multi-node* swarm, but many examples are applicable to a single-node Swarm setup
+
+If we look at the blog, this starts at "A Swarm-y network" and is about the middle of the blog. Which means, as you are guessing, the first half needed to be fully redone with Docker being installed directly on the WSL distro.
+
+And the local install, on both nodes, lead to the second lesson.
+
+## Lesson 2: SNAP, I should use APT
+
+If we look back at the prerequisites, we are using Ubuntu 20.04 as our WSL distro. Due to the current, and modified, init system used by WSL2, the default/standard install of a WSL distro does not load SystemD. That is why we went for a "normal" install using `apt` and not `snap`.
+
+However, for the Multipass host, I taught it would have been a good learning and idea to show the `snap` install of Docker. Once again, that went well until the launch of KinD using the Swarm network we created as "attachable". For whatever reason, the Docker refused to attach to the Swarm network.
+
+This triggered a lot of creation/deletion of Swarm cluster and network, ensuring the nodes were connected, and while everything seemed OK, when trying to launch KinD with the network specified, it would fail.
+
+Even worse, such blog is done over several days, so at some point we even tend to forget the way we installed software. So after some try/fail attempts, we need to get back to "basic" testing of all the components. In this particular case, if the cluster seemed OK, then it might be the software/OS underneath. And thankfully we had two nodes, so we could start comparing why the WSL node was working and not the Multipass.
+
+The result was, as explained above, that Docker installed via `snap` could not (read: permission denied) connect to the Swarm network we created. The next obvious test was to uninstall the `snap` Docker package and install it from the "good old" `apt` repository.
+
+Once done, everything worked as intended and a full subsection on installing Docker with `snap` was deleted.
+
+Finally, all roadblocks were lifted and we could complete our cluster ... or?
+
+## Lesson 3: Inception, which "dream" level are we on?
+
+The last lesson learned while writing this blog came, once again, at a late stage when the need to join the second node. Thanks to Duffie, the join process was clear: reset the second node and run the join command with the `kubeadm` command.
+
+And here started the learning, "where" should we run those commands? by default we want to use the `kubectl` and `kubeadm` commands on the same "inception level" KinD is installed. In our case, it is on WSL directly.
+
+However, when trying to run the `kubeadm token create --print-join-command`, it would print the server connection string with the localhost address (read: `127.0.0.1`) and a random port that would connect to the port `6443` port inside the container. As explained above, this address is unusable from the second node.
+
+The first workaround tried, was to replace the localhost IP by the primary node IP and keep the port. That ended in a first failure about ports not open (etcd) and then about certificate mismatch.
+
+This part, brought the biggest learnings on opening ports for etcd (2379, 2380) and using certificates alternate names (tls-san). And still, every single attempt failed. It was really OK to fail "that beautifully", and end the blog post there by stating it was not possible, however how could we "abandon" so near of a solution.
+
+And that's when, the decision to go "deeper into one additional dream layer" was found. Inside the containers, we are at "ground zero" for the configurations and lucky for us, `kubeadm` was added to the KinD image by its maintainers.
+
+The rest is in the blog and while luck and timing was on our side, if nobody provided a feedback about these features, then it would not have been possible to write this blog at the first place. So thank you to all OSS parties (users and maintainers) for allowing crazy blogs like this one to exist.

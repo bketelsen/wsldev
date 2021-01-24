@@ -2,7 +2,7 @@
 title: "WSL2+RHEL8: The Whale with the Red Hat"
 author: nunix
 date: 2021-01-24T22:40:17.271Z
-description: How to get a shiny Red Hat Enterprise Linux on WSL2 and with Docker installed
+description: How to get a shiny Red Hat Enterprise Linux on WSL2 with Docker installed
 image: /images/blog-icon.png
 tags:
   - wsl2

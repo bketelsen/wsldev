@@ -420,7 +420,7 @@ With all the configuration done, we can now exit the distro in stop the distro f
 wsl --terminate rhel8
 ```
 
-![Terminate the distro](C:\Users\corsair\OneDrive - nunixtech\blogs\WSL.dev\wsl2-rhel8\images\wsl2-terminate-distro.png)
+![Terminate the distro](/images/wsl2-terminate-distro.png)
 
 We can now launch a new session of our distro and check if SystemD processes are running, specially the `pid 1`:
 
@@ -533,7 +533,5 @@ By understanding the capabilities and limitations of the distro of our choice, w
 Be careful though, official support might not be possible and this is where the limitations and other roadblocks will arise. Still, technically it was totally possible.
 
 Last word, as usual, if there is any comments, feel free to send them to [@nunixtech](https://twitter.com/nunixtech) on Twitter.
-
-
 
 > ***\>>> Nunix out <<<***

@@ -187,7 +187,7 @@ vi /etc/profile.d/wsl-init.sh
 
 # Get PID of /sbin/init
 sleep 1
-pid="$(ps -x -o pid,args  | awk -e '$2 ~ /^init/ { print $1 }')"
+pid="$(ps -u root -o pid,args | awk -e '$2 ~ /^init/ { print $1 }')"
 
 # Run WSL service script
 if [ "$pid" -ne 1 ]; then

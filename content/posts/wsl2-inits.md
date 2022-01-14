@@ -58,7 +58,7 @@ Here is my setup:
 
   * [Virtualization Platform and Windows Subsystem for Linux (v2) enabled](https://docs.microsoft.com/en-us/windows/wsl/install)
 * WSL2: a [Store](https://docs.microsoft.com/en-us/windows/wsl/install-manual#step-6---install-your-linux-distribution-of-choice) or [Custom](https://docs.microsoft.com/en-us/windows/wsl/use-custom-distro) distro
-  * For OpenRC, I used [Gentoo](https://www.Gentoo.info/)
+  * For OpenRC, I used [Gentoo](https://www.gentoo.org/)
   * For SystemD, I used both [Ubuntu 21.10](https://ubuntu.com/) and [FedoraRemix](https://www.whitewaterfoundry.com/fedora-remix-for-wsl)
 
 * [Optional] [Windows Terminal](https://devblogs.microsoft.com/commandline/windows-terminal-preview-v0-10-release/)

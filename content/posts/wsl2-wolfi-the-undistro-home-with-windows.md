@@ -3,7 +3,7 @@ title: "WSL2+Wolfi: The first WSL2 (un)distro"
 author: nunix
 date: 2022-10-06T18:00:00.271Z
 description: The Wolfi (un)distro has a new WSL2 home
-image: /images/blog-icon.png
+image: https://assets.website-files.com/6228fdbc6c971401d02a9c42/632b25da24ce804c25a6f040_Wolfi%20Blog%20Hero.jpg
 tags:
   - wsl2
   - wolfi

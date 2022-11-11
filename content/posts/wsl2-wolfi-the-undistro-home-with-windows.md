@@ -233,3 +233,52 @@ tar -zxf ~/vscode-server-linux-x64.tar.gz -C ~/.vscode-server/bin/${commit_id} -
 You can finally launch VS Code from WolfiOS.
 
 ![VS Code launch successfully](/images/wsl2-wolfios-vscode-launch-success.png)
+
+## Bonus 2: adding some Rust coreutils
+
+As described in [Bonus1](#bonus-1-using-vs-code-with-wsl2-wolfios), WolfiOS comes with Busybox utils.
+
+For fun, let's replace it with [coreutils](https://www.gnu.org/software/coreutils/) but with a twist: the [Rust coreutils](https://github.com/uutils/coreutils).
+
+So if you want some Rust core tools in your Wolfi, here's how:
+
+- First, install the required packages and clone the git repo
+
+```shell
+# Refresh the packages list
+apk update
+
+# Add required packages
+apk add gcc git rust glibc-dev make
+
+# Clone the git repo
+git clone https://github.com/uutils/coreutils
+
+# Change directory to the coreutils one
+cd coreutils/
+```
+
+![Add required packages](/images/wsl2-wolfios-rust-add-packages.png)
+
+- Build and install the tools
+
+```shell
+# Build all the utilities using cargo
+cargo build --release
+
+# Install all the utilities using make
+make install
+
+# Confirm the default commands now are linked to the Rust coreutils
+ls -l `which cat`
+
+# Check the version of an original command
+/bin/cat --version
+
+# Check the version of the Rust coreutils command
+cat --version
+```
+
+![Install the Rust coreutils](/images/wsl2-wolfios-rust-install-packages.png)
+
+And you're done! WolfiOS has now the coreutils written in Rust.

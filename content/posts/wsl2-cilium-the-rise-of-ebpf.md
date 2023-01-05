@@ -593,3 +593,241 @@ What a fun and rewarding way to end this quite crazy year 2022. And hopefully th
 To all the readers, I personally want to thank you for your feedback on social media or when we have the chance to meet in person. This gives me the motivation to continue learning and writing about my passion of WSL and the Cloud Native ecosystem. Thank you sincerely from the bottom of my heart.
 
 > \>\>\> Nunix out \<\<\<
+
+# Bonus 1: The k3d fleet gets Cilium
+
+[k3d](https://k3d.io) a tool that creates containerized K3s clusters, so the motivation to have Cilium running on it is very high.
+
+However, the journey to find the right procedure to have a stabilized cluster was by far one of the most challenging I ever faced. The learnings are plenty, but believe me when I say the frustrations were as many.
+
+Luckily, the Force showed the path and here's a semi-automated way to have a stable k3d cluster with Cilium.
+
+## Install k3d
+
+First we need to install k3d. The fastest way is to run the install script with either `curl` or `wget` as described in k3d's homepage:
+
+```bash
+# Install k3d
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+# Check if k3d was installed correctly
+k3d version
+
+# [Optional] Display the list of clusters. The list should be empty
+k3d cluster list
+```
+
+![Install k3d](/images/wsl2-cilium-install-k3d.png)
+
+> Note: as stated already many times in the other blog posts, running a script directly from Internet is as secure as letting your door open. While we can trust the source, still be careful and check the script before running it.
+
+## Create the k3d cluster
+
+k3d evolved to be one of the best management tool when it comes to containerized Kubernetes clusters. So it's strongly recommended to have a look on the options as it with help us create more or less complex clusters.
+
+One difference from KinD for example, is the capability to create a multi-node cluster from the command line directly, without the need of a configuration file.
+
+Enough theory, let's create our k3d cluster and as we did for KinD, the default CNI needs to be disabled:
+
+```bash
+k3d cluster create --agents 2 --k3s-arg "--disable-network-policy@server:*" --k3s-arg "--flannel-backend=none@server:*"
+```
+
+![Create a k3d cluster](/images/wsl2-cilium-k3d-create-cluster.png)
+
+Once the cluster is created, we can check its status in 2 different ways:
+
+```bash
+# List the cluster with k3d
+k3d cluster list
+
+# List the nodes with k3d
+k3d node list
+
+# List the nodes with kubectl
+kubectl get nodes
+
+# List all the pods and their status
+kubectl get pods -A
+```
+
+![Check the cluster with k3d and kubectl](/images/wsl2-cilium-k3d-check-cluster.png)
+
+The output can be somewhat confusing if it's the first time creating a cluster with k3d. While the `kubectl` command shows our 3 nodes, the `k3d` command show a 4th node with the load-balancer role.
+
+This node is specific to k3d and can come very handy if our applications need extra ports to be opened. As for the cluster resources, K3s deploys by default CoreDNS, Traefik, local-path-provisioner and a metrics server.
+
+### [Optional] Create the k3d cluster with a blueprint
+
+Since the version 5, k3d can also create clusters with a config file.
+
+Here's the equivalent config file for our multi-node cluster with the default CNI disabled:
+
+```yaml
+# Create the config file
+vi $HOME/k3dcilium.yaml
+
+# Add the following content and save the file
+
+# k3d configuration file, saved as e.g. /home/me/myk3dcluster.yaml
+apiVersion: k3d.io/v1alpha4 # this will change in the future as we make everything more stable
+kind: Simple # internally, we also have a Cluster config, which is not yet available externally
+metadata:
+  name: k3dcilium # name that you want to give to your cluster (will still be prefixed with `k3d-`)
+servers: 1 # same as `--servers 1`
+agents: 2 # same as `--agents 2`
+kubeAPI:
+  hostIP: 0.0.0.0
+  hostPort: "6443"
+image: rancher/k3s:v1.24.9-k3s1 # same as `--image rancher/k3s:v1.20.4-k3s1`
+token: TheEmpireUsesCilium # same as `--token superSecretToken`
+ports:
+  - port: 8080:80 # same as `--port '8080:80@loadbalancer'`
+    nodeFilters:
+      - loadbalancer
+  - port: 8443:443 # same as `--port '8080:80@loadbalancer'`
+    nodeFilters:
+      - loadbalancer
+options:
+  k3d: # k3d runtime settings
+    wait: true # wait for cluster to be usable before returining; same as `--wait` (default: true)
+    timeout: "6m0s" # wait timeout before aborting; same as `--timeout 60s`
+    disableLoadbalancer: false # same as `--no-lb`
+    disableImageVolume: false # same as `--no-image-volume`
+    disableRollback: false # same as `--no-Rollback`
+  k3s: # options passed on to K3s itself
+    extraArgs: # additional arguments passed to the `k3s server|agent` command; same as `--k3s-arg`
+      - arg: --tls-san=127.0.0.1
+        nodeFilters:
+          - server:*
+      - arg: --disable-network-policy
+        nodeFilters:
+          - server:*
+      - arg: --flannel-backend=none
+        nodeFilters:
+          - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: true # add new cluster to your default Kubeconfig; same as `--kubeconfig-update-default` (default: true)
+    switchCurrentContext: true # also set current-context to the new cluster's context; same as `--kubeconfig-switch-context` (default: true)
+```
+
+Create a new k3d cluster with the config file:
+
+```bash
+k3d cluster create --config k3dcilium.yaml
+```
+
+![Create a k3d cluster from a config file](/images/wsl2-cilium-k3d-create-cluster-configfile.png)
+
+Once the cluster is created, we can check its status in 2 different ways:
+
+```bash
+# List the cluster with k3d
+k3d cluster list
+
+# List the nodes with k3d
+k3d node list
+
+# List the nodes with kubectl
+kubectl get nodes
+
+# List all the pods and their status
+kubectl get pods -A
+```
+
+![Check the cluster with k3d and kubectl](/images/wsl2-cilium-k3d-check-cluster-configfile.png)
+
+## Prepare the nodes
+
+Before we can install Cilium on our k3d cluster, we need to perform a task on "containerized OS". This task is automatically done with KinD containers thanks to the OS base image used for by KinD.
+
+KinD is based on Ubuntu 22.04, and k3d is based in a "mix" of Alpine and the "scratch" image. The k3d base image is very minimal and serves only the purpose of running K3s. While this is considered as the right way to create an image, it also applies some/several limitations for extended use-cases.
+
+Still, the good news is that we can add the missing part(s).
+
+The first part is to mount bpf filesystem and change the mount point to a shared mount:
+
+```bash
+# Mount the bpf filesystem in all nodes
+kubectl get nodes -o custom-columns=NAME:.metadata.name --no-headers=true | xargs -I {} docker exec {} mount bpffs /sys/fs/bpf -t bpf
+
+# Change the bpf mount point to a shared mount
+kubectl get nodes -o custom-columns=NAME:.metadata.name --no-headers=true | xargs -I {} docker exec {} mount --make-shared /sys/fs/bpf
+```
+
+![Mount the BPF filesystem](/images/wsl2-cilium-k3d-mount-bpf.png)
+
+> Note: as described above, k3d deploys a load-balancer node for its own use, so to avoid listing it with `k3d node list`, `kubectl get nodes` seems more logic as it will get only the nodes Kubernetes "sees", and the output can be customized to only display the data we need.
+
+## Install cilium
+
+The nodes are now ready and we can install Cilium:
+
+```bash
+cilium install
+```
+
+![Install Cilium](/images/wsl2-cilium-k3d-install.png)
+
+Open another shell session and monitor the pods
+
+```bash
+kubectl get pods -A -w
+```
+
+![Monitor the pods after the Cilium installation started](/images/wsl2-cilium-k3d-monitor-pods-after-install.png)
+
+After few seconds, the Cilium pods status will be "CreateContainerError". In another shell session, change the `/run/cilium/cgroupv2` mount point to a shared mount:
+
+```bash
+kubectl get nodes -o custom-columns=NAME:.metadata.name --no-headers=true | xargs -I {} docker exec {} mount --make-shared /run/cilium/cgroupv2
+```
+
+![Change the cgroupv2 mount to a shared mount](/images/wsl2-cilium-k3d-mount-cgroupv2.png)
+
+When we switch back to the pod monitoring shell session, we'll see the Cilium pods being created and after some time all the other pods should now have the status "Running":
+
+```bash
+kubectl get pods -A
+```
+
+![List the pods after Cilium install finished](/images/wsl2-cilium-k3d-monitor-pods-after-cgroupv2-mount.png)
+
+Finally we can check the status with Cilium:
+
+```bash
+cilium status
+```
+
+![Check the status with Cilium](/images/wsl2-cilium-k3d-install-status.png)
+
+### Bonus-ception
+
+In the first part with KinD, we didn't use the Cilium connectivity tool, so let's use it now and see the (very) good results:
+
+```bash
+cilium connectivity test
+```
+
+![Cilium connectivity test results](/images/wsl2-cilium-k3d-connectivity-test.png)
+
+## Checkpoint Bonus 1
+
+Let's be honest, this solution feels a bit incomplete and even hard to automate due to the extra mounts and commands we need to run at a specific point in the installation process.
+
+That's why in the Bonus introduction, the solution is described as semi-automated. And I would love to see the power of the Cloud Native community and see how we could automate it completly.
+
+Here's couple notes based on the try&fail (multiple) attempts:
+
+* This solution was built only on WSL2, so I would like to see if it behaves the same on Linux bare metal/VM
+
+* The first several tries were with the bpf and cgroupv2 filesystems mounted as volumes. This caused a lot of errors either on the Cilium pods or the K3s resources pods
+
+And to finish on the bright side, here's a fun test I did while searching how to stabilize the cluster:
+
+* Installed K3s "locally" as the control plane, installed Cilium on the single node = OK
+  * Then created 2 nodes with k3d and added them to the cluster. Run the mount tasks as explained above = OK
+
+I was sincerely impressed to see it "worked as intended" and the new nodes had the Cilium pods deployed and the nodes connected without any network issues. 
+
+**Huge props to k3d and Cilium teams.**

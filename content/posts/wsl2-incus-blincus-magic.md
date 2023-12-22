@@ -1,7 +1,7 @@
 ---
 title: 'Incus, Blincus: the dev env magic'
 author: Nunix
-date: 2023-12-239T17:02:01.584Z
+date: 2023-12-23T17:02:01.584Z
 description: Great tools can run from anywhere with some (crazy) imagination, part 2
 image: /images/banner.png
 tags:
@@ -293,8 +293,6 @@ sudo apt install espeak
 # Test the sound
 espeak "Brian Ketelsen and the whole Incus team are the real stars of this show"
 ```
-
-<video src="/images/wsl2-blincus-sound.mp4"></video>
 
 # Conclusion
 
